@@ -1,50 +1,71 @@
-import java.io.*;
-import java.util.*;
+import java.util.Scanner;
 
-class Boxer {
-String name;
-int age;
-int trainingDays;
-int skillLevel;
-int wins;
-int losses;
+public class BoxingAssistant {
+    private static Scanner scanner = new Scanner(System.in);
+    private static BoxerManager manager = new BoxerManager();
 
-public Boxer(String name, int age) {
-this.name = name;
-this.age = age;
-this.trainingDays = 0;
-this.skillLevel = 1;
-this.wins = 0;
-this.losses = 0;
+    public static void main(String[] args) {
+        manager.loadData();
+        while (true) {
+            System.out.println("\nIzvēlies darbību:");
+            System.out.println("1. Pievienot bokseri");
+            System.out.println("2. Trenēt bokseri");
+            System.out.println("3. Rādīt visus bokserus");
+            System.out.println("4. Meklēt bokseri pēc vārda");
+            System.out.println("5. Dzēst bokseri");
+            System.out.println("6. Sakārtot pēc uzvaru procenta");
+            System.out.println("7. Saglabāt un iziet");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choice) {
+                case 1: addBoxer(); break;
+                case 2: trainBoxer(); break;
+                case 3: manager.displayBoxers(); break;
+                case 4: searchBoxer(); break;
+                case 5: deleteBoxer(); break;
+                case 6: manager.sortBoxers(); break;
+                case 7: manager.saveData(); System.out.println("Dati saglabāti. Uz redzēšanos!"); return;
+                default: System.out.println("Nepareiza izvēle. Mēģini vēlreiz.");
+        }
+    }
 }
 
-public void train(int days) {
-trainingDays += days;
-skillLevel = 1 + trainingDays / 5;
+private static void addBoxer() {
+    System.out.print("\nIevadi vārdu: ");
+    String name = scanner.nextLine();
+    System.out.print("Ievadi vecumu: ");
+    int age = scanner.nextInt();
+    scanner.nextLine();
+    manager.addBoxer(name, age);
 }
 
-public double getWinPercentage() {
-if (wins + losses == 0) return 0;
-return (double) wins / (wins + losses) * 100;
+private static void trainBoxer() {
+    System.out.print("\nIevadi boksera vārdu: ");
+    String name = scanner.nextLine();
+    System.out.print("Ievadi treniņa dienu skaitu: ");
+    int days = scanner.nextInt();
+    scanner.nextLine();
+    manager.trainBoxer(name, days);
 }
 
-public String toFileString() {
-return name + "," + age + "," + trainingDays + "," + skillLevel + "," + wins + "," + losses;
+private static void searchBoxer() {
+    System.out.print("\nIevadi boksera vārdu: ");
+    String name = scanner.nextLine();
+    Boxer boxer = manager.findBoxer(name);
+    if (boxer != null) {
+        System.out.println("\nAtrasts bokseris:");
+        System.out.println(boxer);
+    } else {
+        System.out.println("Bokseris nav atrasts.");
+    }
 }
 
-public static Boxer fromFileString(String line) {
-String[] data = line.split(",");
-Boxer b = new Boxer(data[0], Integer.parseInt(data[1]));
-b.trainingDays = Integer.parseInt(data[2]);
-b.skillLevel = Integer.parseInt(data[3]);
-b.wins = Integer.parseInt(data[4]);
-b.losses = Integer.parseInt(data[5]);
-return b;
-}
-@Override
-public String toString() {
-return String.format("%-10s | Age: %d | Training: %d | Skill: %d | Wins: %d | Losses: %d | Win%%: %.2f",
-name, age, trainingDays, skillLevel, wins, losses, getWinPercentage());
+private static void deleteBoxer() {
+        System.out.print("\nIevadi boksera vārdu dzēšanai: ");
+        String name = scanner.nextLine();
+        manager.deleteBoxer(name);
 }
 }
 
