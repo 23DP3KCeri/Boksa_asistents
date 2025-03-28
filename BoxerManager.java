@@ -1,3 +1,3 @@
-public class BoxerManager{
-    
+public class BoxerManager {
+
 }
