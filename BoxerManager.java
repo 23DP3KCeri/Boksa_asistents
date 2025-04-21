@@ -24,6 +24,12 @@ public class BoxerManager {
         }
     }
 
+    public void showRandomTip() {
+        Random rand = new Random();
+        System.out.println(techniqueTips.get(rand.nextInt(techniqueTips.size())));
+        System.out.println(workoutPlans.get(rand.nextInt(workoutPlans.size())));
+    }
+
     public void displayBoxers() {
         if (boxers.isEmpty()) {
             System.out.println("\nSistēmā nav bokseru.");
@@ -73,4 +79,17 @@ public class BoxerManager {
             System.out.println("Kļūda ielādējot datus.");
         }
     }
+
+    private List<TechniqueTip> techniqueTips = Arrays.asList(
+    new TechniqueTip("Turi2 pareizi aizsardzību!"),
+    new TechniqueTip("Trenē jab ar abām rokām."),
+    new TechniqueTip("Stāvi stingri uz kājām.")
+);
+
+private List<WorkoutPlan> workoutPlans = Arrays.asList(
+    new WorkoutPlan("Lēkšana ar lecamauklu", 10),
+    new WorkoutPlan("Spēka treniņš", 15),
+    new WorkoutPlan("Ēnas bokss", 5)
+);
+
 }
