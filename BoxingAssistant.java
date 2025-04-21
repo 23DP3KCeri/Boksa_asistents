@@ -1,11 +1,11 @@
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class BoxingAssistant {
     private static Scanner scanner = new Scanner(System.in);
-    private static ArrayList<Boxer> boxers = new ArrayList<>();
+    private static BoxerManager manager = new BoxerManager();
 
     public static void main(String[] args) {
+        manager.loadData();
         while (true) {
             System.out.println("\nIzvēlies darbību:");
             System.out.println("1. Pievienot bokseri");
@@ -13,19 +13,24 @@ public class BoxingAssistant {
             System.out.println("3. Rādīt visus bokserus");
             System.out.println("4. Meklēt bokseri pēc vārda");
             System.out.println("5. Dzēst bokseri");
-            System.out.println("6. Saglabāt un iziet");
+            System.out.println("6. Sakārtot pēc uzvaru procenta");
+            System.out.println("7. Saglabāt un iziet");
 
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // attīra buferi
+            int choice = getIntInput("Tava izvēle: ");
 
             switch (choice) {
-                case 1: addBoxer(); break;
-                case 2: trainBoxer(); break;
-                case 3: displayBoxers(); break;
-                case 4: searchBoxer(); break;
-                case 5: deleteBoxer(); break;
-                case 6: System.out.println("Uz redzēšanos!"); return;
-                default: System.out.println("Nepareiza izvēle. Mēģini vēlreiz.");
+                case 1 -> addBoxer();
+                case 2 -> trainBoxer();
+                case 3 -> manager.displayBoxers();
+                case 4 -> searchBoxer();
+                case 5 -> deleteBoxer();
+                case 6 -> manager.sortBoxers();
+                case 7 -> {
+                    manager.saveData();
+                    System.out.println("Dati saglabāti. Uz redzēšanos!");
+                    return;
+                }
+                default -> System.out.println("Nepareiza izvēle. Mēģini vēlreiz.");
             }
         }
     }
@@ -33,45 +38,23 @@ public class BoxingAssistant {
     private static void addBoxer() {
         System.out.print("Ievadi vārdu: ");
         String name = scanner.nextLine();
-        System.out.print("Ievadi vecumu: ");
-        int age = scanner.nextInt();
-        scanner.nextLine();
-        boxers.add(new Boxer(name, age));
-        System.out.println(name + " pievienots!");
+        int age = getIntInput("Ievadi vecumu: ");
+        manager.addBoxer(name, age);
     }
 
     private static void trainBoxer() {
         System.out.print("Ievadi boksera vārdu: ");
         String name = scanner.nextLine();
-        Boxer boxer = findBoxer(name);
-        if (boxer != null) {
-            System.out.print("Ievadi treniņu dienas: ");
-            int days = scanner.nextInt();
-            scanner.nextLine();
-            boxer.train(days);
-            System.out.println("Treniņi pievienoti!");
-        } else {
-            System.out.println("Bokseris nav atrasts.");
-        }
-    }
-
-    private static void displayBoxers() {
-        if (boxers.isEmpty()) {
-            System.out.println("Nav neviena boksera.");
-        } else {
-            System.out.println("Bokseri:");
-            for (Boxer b : boxers) {
-                System.out.println(b);
-            }
-        }
+        int days = getIntInput("Cik dienas trenējies? ");
+        manager.trainBoxer(name, days);
     }
 
     private static void searchBoxer() {
-        System.out.print("Ievadi meklējamo vārdu: ");
+        System.out.print("Ievadi vārdu, ko meklēt: ");
         String name = scanner.nextLine();
-        Boxer boxer = findBoxer(name);
+        Boxer boxer = manager.findBoxer(name);
         if (boxer != null) {
-            System.out.println("Atrasts: " + boxer);
+            System.out.println("Atrasts bokseris: " + boxer);
         } else {
             System.out.println("Bokseris nav atrasts.");
         }
@@ -80,21 +63,17 @@ public class BoxingAssistant {
     private static void deleteBoxer() {
         System.out.print("Ievadi dzēšamā boksera vārdu: ");
         String name = scanner.nextLine();
-        Boxer boxer = findBoxer(name);
-        if (boxer != null) {
-            boxers.remove(boxer);
-            System.out.println(name + " ir izdzēsts.");
-        } else {
-            System.out.println("Bokseris nav atrasts.");
-        }
+        manager.deleteBoxer(name);
     }
 
-    private static Boxer findBoxer(String name) {
-        for (Boxer b : boxers) {
-            if (b.name.equalsIgnoreCase(name)) {
-                return b;
+    private static int getIntInput(String prompt) {
+        while (true) {
+            try {
+                System.out.print(prompt);
+                return Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Lūdzu ievadi skaitli.");
             }
         }
-        return null;
     }
 }
